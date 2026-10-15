@@ -36,6 +36,7 @@ for platform in ['windows-amd64', 'macos-amd64', 'macos-arm64', 'linux-amd64']:
         archive.write(base / 'dist' / ('dsh-computer-mcp-' + platform + suffix), 'dsh-computer-mcp' + suffix)
         archive.write(base / 'README.md', '使用说明.md')
         archive.write(base / 'VERIFICATION.md', '测试记录.md')
+        archive.write(base / 'LICENSE', 'LICENSE')
         launchers = {'启动.cmd': windows} if suffix else {'启动.command': normal}
         if platform.startswith('macos'):
             launchers['启动-sudo.command'] = sudo
@@ -48,9 +49,11 @@ for platform in ['windows-amd64', 'macos-amd64', 'macos-arm64', 'linux-amd64']:
 source = release / f'dsh-computer-mcp-v{version}-source.zip'
 with zipfile.ZipFile(source, 'w', zipfile.ZIP_DEFLATED) as archive:
     for path in sorted(base.iterdir()):
-        if path.is_file() and (path.suffix in ['.go', '.cs', '.mod', '.md', '.html', '.sh', '.py', '.mjs', '.cjs'] or path.name == '.gitignore'):
+        if path.is_file() and (path.suffix in ['.go', '.cs', '.mod', '.md', '.html', '.sh', '.py', '.mjs', '.cjs'] or path.name in ['.gitignore', 'package.json', 'package-lock.json', 'cordis.patch.yml', 'LICENSE']):
             archive.write(path, 'dsh-computer-mcp/' + path.name)
     for path in sorted((base / 'docs').rglob('*.md')):
+        archive.write(path, 'dsh-computer-mcp/' + str(path.relative_to(base)))
+    for path in sorted((base / 'tests').rglob('*.mjs')):
         archive.write(path, 'dsh-computer-mcp/' + str(path.relative_to(base)))
 paths.append(source)
 checks = []

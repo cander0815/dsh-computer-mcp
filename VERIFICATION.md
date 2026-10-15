@@ -16,3 +16,10 @@ Windows 与 macOS 10.15 已进行兼容构建，完整系统行为仍需在对�
 ## v0.0.1 当前快照
 
 全新项目名称下的 Go race 测试和 go vet 已通过。发布文件将按当前快照重新构建，包内说明由当前 README 生成。
+
+## DSH 目录投稿包
+
+- package.json 声明包内 dsh.bundle.patch；配置型 tarball 只包含元数据、patch、README 与 MIT 许可证，无安装时构建脚本。
+- 未完整配置地址与令牌时禁用；完整配置后启用官方 MCP 客户端，工具超时保留为 130 秒。
+- Node.js 24、官方 DSH 0.2.0-rc.2 的独立临时 profile 实测安装并激活 tarball，配置树正确合成。
+- 真实 DSH Web 运行时成功注册 localcomputer 工具，通过该工具读取临时授权目录与测试文件；命令工具未开启时不可用。测试未使用个人项目、生产服务或模型 API 密钥。

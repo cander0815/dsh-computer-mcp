@@ -41,28 +41,39 @@ Harness 可以运行在服务器、NAS 或另一台电脑上。目标电脑运�
 
 Mac 程序使用 ad-hoc 签名，未经过 Apple 公证；Windows 程序未使用商业代码签名，首次启动可能出现系统提示。
 
-### 2. 在 Harness 中配置 MCP
+### 2. 安装 DSH 插件并配置 MCP
 
-在运行 Harness 的环境中使用官方 `@deepseek-ai/dsh-mcp-client` 插件，将本地配置页复制出的内容保存为一个私有 patch 文件。配置结构如下，地址和令牌需替换为配置页生成的实际值：
+本仓库同时提供可安装的 DeepSeek Harness Profile Bundle（`dsh-plugin`）。电脑端程序运行在要操作的电脑上，配置型 bundle 安装在运行 Harness 的环境中；安装插件不会自动安装或启动电脑端程序。
 
-```yaml
-- insert:
-    - id: local-computer
-      name: '@deepseek-ai/dsh-mcp-client'
-      config:
-        serverName: localcomputer
-        transport: streamable-http
-        url: 'http://<目标电脑地址>:18790/mcp'
-        headers:
-          Authorization: 'Bearer <连接令牌>'
-        toolCallTimeoutMs: 130000
+已验证的组合为 Node.js 24 和 DSH `0.2.0-rc.2`，使用 DSH 自带的官方 `@deepseek-ai/dsh-mcp-client`。在已安装 `dsh` 命令的环境中执行：
+
+```sh
+dsh plugin --profile web add github:cander0815/dsh-computer-mcp
 ```
 
-通过 Harness 的 `--patch` 参数加载此文件；后台服务或容器部署也需要在启动配置中持久加载，并持久保存 patch 文件。接入方式取决于 Harness 的部署环境。
+这是 GitHub 源码安装，当前未发布同名 npm 注册表包。该 bundle 不含 `prepare` 或其他安装时构建脚本，不需要授权构建。若使用不同 profile，请将 `web` 换为实际 profile 名称。
 
-配对文件和 patch 中的令牌具有访问权限，只交给可信的 Harness 环境，不要提交到公共仓库。不同电脑或不同授权范围应使用独立的连接配置。
+随后将电脑配置页下载的配对文件中的 `url` 和 `token` 设置为 Harness 进程的环境变量。以下为 POSIX Shell 示例，只使用占位符：
 
-修改配置或升级后，让 Harness 重新连接 MCP，刷新工具列表；必要时重启对应的 Harness 实例。
+```sh
+export DSH_COMPUTER_MCP_URL='http://<目标电脑地址>:18790/mcp'
+export DSH_COMPUTER_MCP_TOKEN='<连接令牌>'
+dsh --profile web
+```
+
+Windows PowerShell 示例：
+
+```powershell
+$env:DSH_COMPUTER_MCP_URL = 'http://<目标电脑地址>:18790/mcp'
+$env:DSH_COMPUTER_MCP_TOKEN = '<连接令牌>'
+dsh --profile web
+```
+
+两个变量未完整填写时插件保持禁用，不尝试连接。必须设置在 **Harness 进程的启动环境**中，不要放进项目 `.env` 文件。后台服务或容器部署需将环境变量写入相应的私有启动配置，并安装到同一个持久 profile。令牌不要提交到公共仓库或发在投稿内容中。
+
+如果此前已手工加载配置页生成的 `local-computer` patch，请先停用旧 patch，再使用 bundle，避免重复注册相同服务器名称。也可以继续使用原有手工 patch 接入方式；两种方式选一种即可。
+
+修改配置或升级后，让 Harness 重新连接 MCP，刷新工具列表；必要时重启相应的 Harness 实例。
 
 ### 3. 告诉 AI 使用目标电脑的工具
 
@@ -163,3 +174,7 @@ python3 package-release.py
 `build.sh` 在 macOS 运行，构建各平台程序，并为 Mac 产物补齐 Mach-O UUID、标注最低系统版本与重新签名。`package-release.py` 生成 ZIP、启动脚本和 SHA256 校验文件。
 
 测试范围和已知限制见 [VERIFICATION.md](VERIFICATION.md)。
+
+## 开源许可证
+
+本项目使用 [MIT License](LICENSE)。

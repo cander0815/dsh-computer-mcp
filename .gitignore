@@ -11,3 +11,7 @@ config.json
 .env.*
 # 操作日志可能包含命令输出，禁止提交。
 *.log
+
+# 本地插件依赖和配置型发布包。
+node_modules/
+*.tgz

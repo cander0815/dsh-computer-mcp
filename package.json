@@ -1,0 +1,49 @@
+{
+  "name": "dsh-computer-mcp",
+  "version": "0.0.1",
+  "description": "DeepSeek Harness bundle for connecting to another computer over MCP: remote files, search, editing, recycle bin and optional commands.",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cander0815/dsh-computer-mcp.git"
+  },
+  "homepage": "https://github.com/cander0815/dsh-computer-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/cander0815/dsh-computer-mcp/issues"
+  },
+  "keywords": [
+    "dsh-plugin",
+    "deepseek-harness",
+    "mcp",
+    "remote-computer",
+    "tailscale"
+  ],
+  "engines": {
+    "node": ">=24"
+  },
+  "files": [
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh": "0.2.0-rc.2"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/dsh": {
+      "optional": true
+    }
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.mjs"
+  },
+  "devDependencies": {
+    "js-yaml": "^4.2.0"
+  }
+}

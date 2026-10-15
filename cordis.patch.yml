@@ -1,0 +1,12 @@
+# 未完整设置地址和令牌时禁用，不主动连接默认电脑。
+- insert:
+    - id: local-computer
+      name: '@deepseek-ai/dsh-mcp-client'
+      disabled: !!js '!process.env.DSH_COMPUTER_MCP_URL?.trim() || !process.env.DSH_COMPUTER_MCP_TOKEN?.trim()'
+      config:
+        serverName: localcomputer
+        transport: streamable-http
+        url: !!js process.env.DSH_COMPUTER_MCP_URL?.trim() || 'http://localhost:18790/mcp'
+        headers:
+          Authorization: !!js "'Bearer ' + (process.env.DSH_COMPUTER_MCP_TOKEN?.trim() || '')"
+        toolCallTimeoutMs: 130000
